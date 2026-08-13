@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { db, useFirebase, collection, addDoc, serverTimestamp } from '../firebase';
 import { 
   ArrowLeft, 
   Sparkles, 
@@ -70,9 +71,43 @@ export default function StrategyContactPage({ onBackToHome, initialService = '' 
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
+
+    const leadDoc = {
+      name: formData.fullName || 'Website Lead',
+      email: formData.email || '',
+      phone: formData.phone || '',
+      company: formData.businessName || '',
+      category: formData.services.join(', ') || 'Performance Marketing',
+      budget: formData.adBudget || '',
+      status: 'Pending Review',
+      notes: `Goal: ${formData.primaryGoal}. Notes: ${formData.notes || 'None'}`,
+      createdAt: new Date().toISOString()
+    };
+
+    // 1. Firebase Write
+    if (useFirebase && db) {
+      try {
+        await addDoc(collection(db, 'enquiries'), {
+          ...leadDoc,
+          createdAt: serverTimestamp()
+        });
+      } catch (err) {
+        console.warn("Firestore lead write error:", err);
+      }
+    }
+
+    // 2. LocalStorage Sync
+    try {
+      const stored = JSON.parse(localStorage.getItem('zapple_enquiries') || '[]');
+      const newList = [{ id: 'web-' + Date.now(), ...leadDoc }, ...stored];
+      localStorage.setItem('zapple_enquiries', JSON.stringify(newList));
+    } catch (err) {
+      console.warn("LocalStorage save error:", err);
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

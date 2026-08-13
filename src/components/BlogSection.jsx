@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Calendar, ArrowRight } from 'lucide-react';
+import { db, useFirebase, collection, onSnapshot, query, orderBy } from '../firebase';
 
 export default function BlogSection({ onSelectArticle }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [articles, setArticles] = useState([]);
 
-  const articles = [
+  const defaultArticles = [
     {
       id: 1,
       title: "Top Digital Marketing Strategies for Local Business Growth in 2026",
@@ -39,6 +41,37 @@ export default function BlogSection({ onSelectArticle }) {
       image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
     },
   ];
+
+  useEffect(() => {
+    if (useFirebase && db) {
+      const q = query(collection(db, 'articles'), orderBy('createdAt', 'desc'));
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const list = [];
+        snapshot.forEach((doc) => {
+          list.push({ id: doc.id, ...doc.data() });
+        });
+        setArticles(list.length ? list : defaultArticles);
+      }, (error) => {
+        loadLocalStorage();
+      });
+      return () => unsubscribe();
+    } else {
+      loadLocalStorage();
+    }
+  }, []);
+
+  const loadLocalStorage = () => {
+    try {
+      const stored = localStorage.getItem('zapple_articles');
+      if (stored) {
+        setArticles(JSON.parse(stored));
+      } else {
+        setArticles(defaultArticles);
+      }
+    } catch (e) {
+      setArticles(defaultArticles);
+    }
+  };
 
   const filteredArticles = articles.filter(art => 
     art.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
