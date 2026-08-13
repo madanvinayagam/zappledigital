@@ -1,7 +1,7 @@
 import React from 'react';
 import { Phone, MessageCircle, Mail, MapPin, Instagram, Youtube, Linkedin, Twitter } from 'lucide-react';
 
-export default function Footer({ onOpenLeadModal }) {
+export default function Footer({ onOpenLeadModal, onOpenStrategyPage }) {
   const whatsappUrl = `https://wa.me/919962632103?text=${encodeURIComponent("Hi Zapple Digital! I'd like to get in touch regarding your agency services.")}`;
 
   return (
@@ -21,10 +21,10 @@ export default function Footer({ onOpenLeadModal }) {
 
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
             <button
-              onClick={() => onOpenLeadModal()}
+              onClick={() => onOpenStrategyPage ? onOpenStrategyPage() : onOpenLeadModal()}
               className="w-full sm:w-auto bg-white hover:bg-slate-100 text-red-700 font-extrabold text-xs px-6 py-4 rounded-xl shadow-lg whitespace-nowrap transition-colors"
             >
-              Get Free Growth Audit
+              Get Free Strategy & Audit Page
             </button>
             <a
               href={whatsappUrl}
@@ -115,7 +115,7 @@ export default function Footer({ onOpenLeadModal }) {
               <li><a href="#portfolio" className="hover:text-red-400 transition-colors">Case Studies</a></li>
               <li><a href="#instagram" className="hover:text-red-400 transition-colors">Community</a></li>
               <li><a href="#blog" className="hover:text-red-400 transition-colors">Blog Insights</a></li>
-              <li><button onClick={() => onOpenLeadModal()} className="hover:text-red-400 transition-colors text-left">Free Consultation</button></li>
+              <li><button onClick={() => onOpenStrategyPage ? onOpenStrategyPage() : onOpenLeadModal()} className="hover:text-red-400 transition-colors text-left font-bold text-red-400">Free Strategy Page</button></li>
             </ul>
           </div>
 

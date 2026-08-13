@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Phone, MessageCircle, ArrowRight, Menu, X } from 'lucide-react';
 
-export default function Header({ onOpenLeadModal }) {
+export default function Header({ onOpenLeadModal, onOpenStrategyPage, onBackToHome }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -15,13 +15,28 @@ export default function Header({ onOpenLeadModal }) {
 
   const whatsappUrl = `https://wa.me/919962632103?text=${encodeURIComponent("Hi Zapple Digital! I'm interested in growing my business with your digital marketing services.")}`;
 
+  const handleNavClick = (e, targetHash) => {
+    if (onBackToHome) {
+      onBackToHome();
+    }
+    if (targetHash) {
+      window.location.hash = targetHash;
+    }
+  };
+
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md border-b border-slate-200/80 py-3 shadow-sm shadow-slate-200/50' : 'bg-transparent py-5'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           
           {/* Brand Logo */}
-          <a href="#" className="flex items-center gap-3 group">
+          <button 
+            onClick={() => {
+              if (onBackToHome) onBackToHome();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="flex items-center gap-3 group text-left"
+          >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-600 to-red-500 flex items-center justify-center font-display font-extrabold text-white text-2xl shadow-lg shadow-red-600/30 group-hover:scale-105 transition-transform">
               Z
             </div>
@@ -33,14 +48,20 @@ export default function Header({ onOpenLeadModal }) {
                 Digital Agency
               </span>
             </div>
-          </a>
+          </button>
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
-            <a href="#services" className="hover:text-red-600 transition-colors">Services</a>
-            <a href="#portfolio" className="hover:text-red-600 transition-colors">Projects</a>
-            <a href="#instagram" className="hover:text-red-600 transition-colors">Community</a>
-            <a href="#blog" className="hover:text-red-600 transition-colors">Insights</a>
+            <a href="#services" onClick={(e) => handleNavClick(e, '#services')} className="hover:text-red-600 transition-colors">Services</a>
+            <a href="#portfolio" onClick={(e) => handleNavClick(e, '#portfolio')} className="hover:text-red-600 transition-colors">Projects</a>
+            <a href="#instagram" onClick={(e) => handleNavClick(e, '#instagram')} className="hover:text-red-600 transition-colors">Community</a>
+            <a href="#blog" onClick={(e) => handleNavClick(e, '#blog')} className="hover:text-red-600 transition-colors">Insights</a>
+            <button 
+              onClick={() => onOpenStrategyPage && onOpenStrategyPage()} 
+              className="text-red-600 hover:text-red-700 transition-colors font-bold flex items-center gap-1"
+            >
+              <span>Get Free Strategy</span>
+            </button>
           </nav>
 
           {/* Quick Contact & Lead Action CTAs */}
@@ -64,7 +85,7 @@ export default function Header({ onOpenLeadModal }) {
             </a>
 
             <button
-              onClick={() => onOpenLeadModal()}
+              onClick={() => onOpenStrategyPage ? onOpenStrategyPage() : onOpenLeadModal()}
               className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-semibold text-xs px-4 py-2.5 rounded-full shadow-md shadow-red-600/20 transition-all transform hover:-translate-y-0.5"
             >
               <span>Get Free Strategy</span>
@@ -86,10 +107,19 @@ export default function Header({ onOpenLeadModal }) {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-slate-200 px-6 py-6 space-y-4 shadow-xl animate-in slide-in-from-top-5">
           <nav className="flex flex-col gap-4 text-base font-semibold text-slate-700">
-            <a href="#services" onClick={() => setMobileMenuOpen(false)} className="hover:text-red-600">Services</a>
-            <a href="#portfolio" onClick={() => setMobileMenuOpen(false)} className="hover:text-red-600">Projects</a>
-            <a href="#instagram" onClick={() => setMobileMenuOpen(false)} className="hover:text-red-600">Community</a>
-            <a href="#blog" onClick={() => setMobileMenuOpen(false)} className="hover:text-red-600">Insights</a>
+            <a href="#services" onClick={(e) => { setMobileMenuOpen(false); handleNavClick(e, '#services'); }} className="hover:text-red-600">Services</a>
+            <a href="#portfolio" onClick={(e) => { setMobileMenuOpen(false); handleNavClick(e, '#portfolio'); }} className="hover:text-red-600">Projects</a>
+            <a href="#instagram" onClick={(e) => { setMobileMenuOpen(false); handleNavClick(e, '#instagram'); }} className="hover:text-red-600">Community</a>
+            <a href="#blog" onClick={(e) => { setMobileMenuOpen(false); handleNavClick(e, '#blog'); }} className="hover:text-red-600">Insights</a>
+            <button 
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onOpenStrategyPage) onOpenStrategyPage();
+              }}
+              className="text-left font-bold text-red-600 hover:text-red-700 py-1"
+            >
+              Get Free Strategy & Contact Page →
+            </button>
           </nav>
           <div className="pt-4 border-t border-slate-100 flex flex-col gap-3">
             <a 
@@ -111,7 +141,8 @@ export default function Header({ onOpenLeadModal }) {
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
-                onOpenLeadModal();
+                if (onOpenStrategyPage) onOpenStrategyPage();
+                else onOpenLeadModal();
               }}
               className="w-full py-3 rounded-xl bg-gradient-to-r from-red-600 to-red-700 text-white font-bold text-sm shadow-md shadow-red-600/20"
             >

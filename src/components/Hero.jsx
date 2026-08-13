@@ -1,7 +1,7 @@
 import React from 'react';
 import { MessageCircle, Phone, ArrowUpRight, ShieldCheck, TrendingUp, Sparkles, Target, Zap } from 'lucide-react';
 
-export default function Hero({ onOpenLeadModal }) {
+export default function Hero({ onOpenLeadModal, onOpenStrategyPage }) {
   const whatsappUrl = `https://wa.me/919962632103?text=${encodeURIComponent("Hi Zapple Digital! I saw your website and want to get a free strategy plan for my brand.")}`;
 
   return (
@@ -30,10 +30,10 @@ export default function Hero({ onOpenLeadModal }) {
           {/* Call to Action Group */}
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={() => onOpenLeadModal()}
+              onClick={() => onOpenStrategyPage ? onOpenStrategyPage() : onOpenLeadModal()}
               className="w-full sm:w-auto flex items-center justify-center gap-3 bg-gradient-to-r from-red-600 via-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-base px-8 py-4 rounded-2xl shadow-xl shadow-red-600/25 transition-all transform hover:-translate-y-1"
             >
-              <span>Get Guaranteed Growth Plan</span>
+              <span>Get Free Strategy & Audit Page</span>
               <ArrowUpRight className="w-5 h-5" />
             </button>
 
