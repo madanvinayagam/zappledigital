@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Calendar, ArrowRight } from 'lucide-react';
-import { db, useFirebase, collection, onSnapshot, query, orderBy } from '../firebase';
+import { db, rtdb, useFirebase, collection, onSnapshot, query, orderBy, ref, onValue } from '../firebase';
 
 export default function BlogSection({ onSelectArticle }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,22 +43,38 @@ export default function BlogSection({ onSelectArticle }) {
   ];
 
   useEffect(() => {
+    if (useFirebase && rtdb) {
+      const articlesRef = ref(rtdb, 'articles');
+      const unsubscribe = onValue(articlesRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          const list = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+          list.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+          setArticles(list);
+        } else {
+          syncFirestoreOrLocal();
+        }
+      }, () => syncFirestoreOrLocal());
+      return () => unsubscribe();
+    } else {
+      syncFirestoreOrLocal();
+    }
+  }, []);
+
+  const syncFirestoreOrLocal = () => {
     if (useFirebase && db) {
       const q = query(collection(db, 'articles'), orderBy('createdAt', 'desc'));
-      const unsubscribe = onSnapshot(q, (snapshot) => {
+      onSnapshot(q, (snapshot) => {
         const list = [];
         snapshot.forEach((doc) => {
           list.push({ id: doc.id, ...doc.data() });
         });
         setArticles(list.length ? list : defaultArticles);
-      }, (error) => {
-        loadLocalStorage();
-      });
-      return () => unsubscribe();
+      }, () => loadLocalStorage());
     } else {
       loadLocalStorage();
     }
-  }, []);
+  };
 
   const loadLocalStorage = () => {
     try {

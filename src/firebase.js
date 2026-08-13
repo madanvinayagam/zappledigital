@@ -23,7 +23,7 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "",
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
   appId: import.meta.env.VITE_FIREBASE_APP_ID || "",
-  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || `https://${import.meta.env.VITE_FIREBASE_PROJECT_ID || 'zappledigital-db'}-default-rtdb.firebaseio.com`
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || "https://zappledigital-db-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
 let app;
@@ -34,13 +34,30 @@ let useFirebase = false;
 if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
   try {
     app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-    db = getFirestore(app);
-    rtdb = getDatabase(app);
-    useFirebase = true;
+
+    // 1. Initialize Realtime Database (RTDB) independently with databaseURL
+    try {
+      rtdb = getDatabase(app, firebaseConfig.databaseURL);
+      useFirebase = true;
+      console.log("🔥 Firebase Realtime Database initialized successfully at:", firebaseConfig.databaseURL);
+    } catch (rtdbErr) {
+      console.warn("⚠️ Realtime Database init warning:", rtdbErr);
+    }
+
+    // 2. Initialize Firestore independently if enabled
+    try {
+      db = getFirestore(app);
+      useFirebase = true;
+    } catch (fsErr) {
+      console.info("ℹ️ Firestore database not created or disabled on project.");
+    }
+
   } catch (error) {
-    console.warn("Firebase initialization failed, falling back to LocalStorage:", error);
+    console.warn("⚠️ Firebase app initialization failed:", error);
     useFirebase = false;
   }
+} else {
+  console.info("ℹ️ Firebase credentials missing. Running in LocalStorage fallback mode.");
 }
 
 export { 

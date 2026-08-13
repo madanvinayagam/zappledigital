@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db, useFirebase, collection, addDoc, serverTimestamp } from '../firebase';
+import { db, rtdb, useFirebase, collection, addDoc, serverTimestamp, ref, push, set } from '../firebase';
 import { 
   ArrowLeft, 
   Sparkles, 
@@ -87,7 +87,17 @@ export default function StrategyContactPage({ onBackToHome, initialService = '' 
       createdAt: new Date().toISOString()
     };
 
-    // 1. Firebase Write
+    // 1. Firebase Realtime Database Write
+    if (useFirebase && rtdb) {
+      try {
+        const newRef = push(ref(rtdb, 'enquiries'));
+        await set(newRef, leadDoc);
+      } catch (err) {
+        console.warn("RTDB lead write error:", err);
+      }
+    }
+
+    // 2. Firebase Firestore Write (if active)
     if (useFirebase && db) {
       try {
         await addDoc(collection(db, 'enquiries'), {
@@ -99,7 +109,7 @@ export default function StrategyContactPage({ onBackToHome, initialService = '' 
       }
     }
 
-    // 2. LocalStorage Sync
+    // 3. LocalStorage Sync Backup
     try {
       const stored = JSON.parse(localStorage.getItem('zapple_enquiries') || '[]');
       const newList = [{ id: 'web-' + Date.now(), ...leadDoc }, ...stored];
