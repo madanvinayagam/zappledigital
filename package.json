@@ -1,0 +1,9 @@
+{
+  "name": "zappledigital",
+  "version": "1.0.0",
+  "description": "Vercel-style crash page",
+  "scripts": {
+    "start": "echo 'Static site - no build needed'"
+  },
+  "license": "MIT"
+}
