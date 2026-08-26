@@ -8,6 +8,43 @@ export default function ArticlePage({ article, onBack, onOpenLeadModal }) {
 
   const coverImage = article.image || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80";
 
+  const contentParagraph1 = article.contentParagraph1 || "At Zapple Digital Marketing Agency, our mission is to empower businesses and organizations with modern performance marketing, data analytics, and high-impact digital growth strategies.";
+
+  const insights = article.insights && article.insights.length ? article.insights : [
+    {
+      heading: "Hyperlocal Geofenced Meta & Instagram Campaigns",
+      text: "Targeting specific buyer radius ensures your ad spends deliver maximum conversions with zero wasted impressions."
+    },
+    {
+      heading: "Generative AI Prompt Engineering Workflows",
+      text: "Integrating AI scriptwriting and asset variation tools enables 10x content output without compromising quality."
+    },
+    {
+      heading: "Instant WhatsApp Conversions & Lead Funnels",
+      text: "Bypassing long friction web forms directly into pre-filled WhatsApp conversations boosts lead intake by over 300%."
+    }
+  ];
+
+  const gallery = article.gallery && article.gallery.length ? article.gallery : [
+    {
+      title: "GenAI Spark Keynote Presentation",
+      location: "SASTRA University Campus",
+      image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=800&q=80",
+    },
+    {
+      title: "Live Student Prompting Session",
+      location: "Interactive AI Lab",
+      image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
+    },
+    {
+      title: "Executive Q&A & Certificate Awards",
+      location: "SASTRA Main Auditorium",
+      image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80",
+    },
+  ];
+
+  const contentParagraph2 = article.contentParagraph2 || (article.content ? article.content : "Our tailored digital marketing strategies are designed to align with your business goals, maximize ROI, and create long-lasting brand value. Whether you are aiming to increase foot traffic or automate lead capture, we are here to execute.");
+
   return (
     <div className="pt-28 pb-24 bg-[#f8fafc] text-slate-800 relative z-10 min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
@@ -102,7 +139,7 @@ export default function ArticlePage({ article, onBack, onOpenLeadModal }) {
         {/* Full Article Content */}
         <div className="prose prose-slate max-w-none text-slate-700 text-base leading-relaxed space-y-6 font-medium">
           <p>
-            At <strong>Zapple Digital Marketing Agency</strong>, our mission is to empower businesses and organizations with modern performance marketing, data analytics, and high-impact digital growth strategies.
+            {contentParagraph1}
           </p>
 
           <h2 className="font-display font-bold text-2xl text-slate-900 pt-4">
@@ -110,20 +147,7 @@ export default function ArticlePage({ article, onBack, onOpenLeadModal }) {
           </h2>
 
           <div className="space-y-4">
-            {[
-              {
-                heading: "Hyperlocal Geofenced Meta & Instagram Campaigns",
-                text: "Targeting specific buyer radius ensures your ad spends deliver maximum conversions with zero wasted impressions."
-              },
-              {
-                heading: "Generative AI Prompt Engineering Workflows",
-                text: "Integrating AI scriptwriting and asset variation tools enables 10x content output without compromising quality."
-              },
-              {
-                heading: "Instant WhatsApp Conversions & Lead Funnels",
-                text: "Bypassing long friction web forms directly into pre-filled WhatsApp conversations boosts lead intake by over 300%."
-              }
-            ].map((item, idx) => (
+            {insights.map((item, idx) => (
               <div key={idx} className="flex gap-4 p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
                 <CheckCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
                 <div>
@@ -138,25 +162,9 @@ export default function ArticlePage({ article, onBack, onOpenLeadModal }) {
             Workshop & Campaign Moments (Gallery Highlights)
           </h2>
 
-          {/* Workshop Stock Photo Gallery (Matching Ref Images 1, 2, 3) */}
+          {/* Workshop Stock Photo Gallery */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-            {[
-              {
-                title: "GenAI Spark Keynote Presentation",
-                location: "SASTRA University Campus",
-                image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=800&q=80",
-              },
-              {
-                title: "Live Student Prompting Session",
-                location: "Interactive AI Lab",
-                image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
-              },
-              {
-                title: "Executive Q&A & Certificate Awards",
-                location: "SASTRA Main Auditorium",
-                image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80",
-              },
-            ].map((img, i) => (
+            {gallery.map((img, i) => (
               <div key={i} className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-white group">
                 <div className="aspect-[4/3] relative overflow-hidden">
                   <img 
@@ -177,6 +185,10 @@ export default function ArticlePage({ article, onBack, onOpenLeadModal }) {
               </div>
             ))}
           </div>
+
+          <p className="pt-4">
+            {contentParagraph2}
+          </p>
         </div>
 
         {/* High Conversion Bottom Banner */}
